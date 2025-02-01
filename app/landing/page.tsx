@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import '../globals.css';
+import { Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 const LandingPage = () => {
   const textsToDisplay = [
@@ -65,6 +67,17 @@ const LandingPage = () => {
     setIsFocused(false);
   };
 
+  const handleSearch = () => {
+    console.log("Searching for:", inputValue);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevents new lines in textarea
+      handleSearch();
+    }
+  };
+
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col justify-start items-center text-white relative overflow-hidden">
       {/* Floating Symbols Background */}
@@ -75,7 +88,7 @@ const LandingPage = () => {
       </div>
 
       {/* Header */}
-      <header className="w-full bg-gray-800 py-4 shadow-lg text-center z-10">
+      <header className="w-full bg-gray-800 py-8 shadow-lg text-center z-10">
         <h1 className="text-4xl font-extrabold font-serif text-blue-400 tracking-wide">
           Instructly
         </h1>
@@ -83,18 +96,26 @@ const LandingPage = () => {
 
       {/* Centered Content */}
       <div className="flex-grow flex flex-col justify-center items-center z-10">
-        {/* Dynamically Resizing Textarea */}
-        <div className="relative mb-6">
+        {/* Search Input with Button */}
+        <div className="relative mb-6 flex items-center space-x-4">
           <textarea
             ref={textAreaRef}
             value={inputValue}
             onChange={handleChange}
+            onKeyDown={handleKeyDown} // Detect Enter key
             placeholder={isFocused ? '' : placeholderText}
-            className="bg-gray-800 text-white p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden"
+            className="bg-gray-800 text-white p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden border-4 border-white focus:border-blue-400"
             onFocus={handleFocus}
             onBlur={handleBlur}
-            style={{ minHeight: '80px', maxHeight: '300px' }} // Improved default size
+            style={{ minHeight: '80px', maxHeight: '300px' }} 
           />
+          {/* Search Button */}
+          <Button 
+            type="submit" 
+            className="bg-blue-500 text-white py-10 px-10 rounded-2xl text-xl"
+            onClick={handleSearch}>
+            <Search className="mr-2 h-8 w-8" /> Search
+          </Button>
         </div>
       </div>
     </div>

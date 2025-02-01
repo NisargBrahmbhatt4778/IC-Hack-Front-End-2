@@ -89,13 +89,13 @@ body {
 .floating-symbol {
   position: absolute;
   font-size: 2rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   animation: float 6s infinite ease-in-out;
   pointer-events: none;
 }
 
 /* Position them randomly on the screen */
-.floating-symbol:nth-child(1) { top: 10%; left: 20%; animation-duration: 8s; }
+.floating-symbol:nth-child(1) { top: 15%; left: 20%; animation-duration: 8s; }
 .floating-symbol:nth-child(2) { top: 30%; left: 70%; animation-duration: 10s; }
 .floating-symbol:nth-child(3) { top: 50%; left: 40%; animation-duration: 7s; }
 .floating-symbol:nth-child(4) { top: 70%; left: 80%; animation-duration: 6s; }
