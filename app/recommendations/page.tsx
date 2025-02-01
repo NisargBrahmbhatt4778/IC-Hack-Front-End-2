@@ -66,12 +66,22 @@ export default function RecommendationPage() {
           ))}
         </div>
       </main>
+
+      {/* Generate Video Button */}
+      <div className="mb-12 flex justify-center w-full z-10">
+        <Button 
+          onClick={() => router.push('/')} 
+          className="bg-green-500 text-white py-6 px-10 rounded-2xl text-xl">
+          <Play className="mr-2 h-8 w-8" /> Generate Video
+        </Button>
+      </div>
+
     </div>
   )
 }
 
 function generateVideos() {
-  return Array.from({ length: 12 }, (_, i) => ({
+  return Array.from({ length: 6 }, (_, i) => ({
     title: `Video ${i + 1}`,
     channel: `Channel ${i + 1}`,
     thumbnail: `/thumbnail.jpg`,
