@@ -1,0 +1,12 @@
+@media (max-width: 768px) {
+  .flex-row {
+    flex-direction: column;
+  }
+  .w-1/2 {
+    width: 100%;
+  }
+  .h-screen {
+    height: auto;
+  }
+}
+

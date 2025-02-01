@@ -1,0 +1,14 @@
+{
+  "node": {
+    "68a7d092312e2f1908687cbe1d49b5e906f5322f": {
+      "workers": {
+        "app/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fnisarg%2FDesktop%2FIC-Hack-Front-End%2Fapp%2Factions%2Fclaude.ts%22%2C%5B%22askClaude%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "Vkm6cWfnDyO+ZZYQ/GeLkhHN/n0StQ1FfhzpBXqN9Mg="
+}
