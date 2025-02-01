@@ -1,13 +1,12 @@
-'use client'; // Mark this as a Client Component
+"use client"
 
 import { useState, useEffect, useRef } from 'react';
 import '../globals.css';
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-const LandingPage = () => {
+export default function LandingPage() {
   const textsToDisplay = [
-    "Curvature of spacetime near a black hole.",
     "Formation of a sine wave.",
     "Fluid flow using Bernoulli's principle.",
     "Eigenvalues transforming vectors.",
@@ -19,6 +18,7 @@ const LandingPage = () => {
   const [inputValue, setInputValue] = useState('');
   
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     let index = 0;
@@ -37,23 +37,11 @@ const LandingPage = () => {
       }
     }, 100);
 
-    return () => {
-      clearInterval(typingInterval);
-      setPlaceholderText('');
-    };
+    return () => clearInterval(typingInterval);
   }, [currentTextIndex]);
-
-  // Function to dynamically resize textarea height
-  const adjustHeight = () => {
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = 'auto'; // Reset height
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // Set to content height
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
-    adjustHeight(); // Resize dynamically
   };
 
   const handleFocus = () => {
@@ -117,9 +105,13 @@ const LandingPage = () => {
             <Search className="mr-2 h-8 w-8" /> Search
           </Button>
         </div>
+        <button
+          onClick={handleSearch}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+        >
+          Search
+        </button>
       </div>
     </div>
   );
-};
-
-export default LandingPage;
+}

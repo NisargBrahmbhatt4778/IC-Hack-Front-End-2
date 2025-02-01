@@ -1,15 +1,22 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Play } from "lucide-react"
-import '../globals.css';
+import Link from "next/link"
 
 export default function RecommendationPage() {
   const [videos, setVideos] = useState(generateVideos())
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const query = searchParams.get('query') || ''
+  const [inputValue, setInputValue] = useState(query)
+
+  useEffect(() => {
+    setInputValue(query)
+  }, [query])
 
   function handleSearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -39,9 +46,15 @@ export default function RecommendationPage() {
       {/* Search Bar */}
       <div className="mb-12 flex justify-center w-full z-10 pt-12">
         <form onSubmit={handleSearch} className="flex gap-4 w-full max-w-4xl">
-          <Input type="search" placeholder="Search for videos..." className="flex-grow bg-gray-800 text-white p-6 rounded-2xl text-xl" />
+          <Input 
+            type="search" 
+            placeholder="Search for videos..." 
+            className="flex-grow bg-gray-800 text-white p-6 rounded-2xl text-xl" 
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
           <Button type="submit" className="bg-blue-500 text-white py-6 px-10 rounded-2xl text-xl">
-        <Search className="mr-2 h-8 w-8" /> Search
+            <Search className="mr-2 h-8 w-8" /> Search
           </Button>
         </form>
       </div>
@@ -50,19 +63,17 @@ export default function RecommendationPage() {
       <main className="mb-6 flex justify-center w-full z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {videos.map((video, index) => (
-            <div 
-              key={index} 
-              className="bg-gray-800 rounded-xl shadow-lg overflow-hidden w-80 cursor-pointer transition-transform transform hover:scale-105" 
-              onClick={() => handleVideoClick(video.title)}
-            >
-              <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                <img src={video.thumbnail || "/thumbnail.jpg"} alt={video.title} className="absolute top-0 left-0 w-full h-full object-cover rounded-t-xl" />
-              </div>
-              <div className="p-4 text-center">
-                <h3 className="font-semibold text-lg mb-1 text-blue-400 truncate">{video.title}</h3>
-                <p className="text-sm text-gray-400">{video.channel}</p>
-              </div>
-            </div>
+            <Link key={index} href={`/?video=${encodeURIComponent(video.title)}`} legacyBehavior>
+              <a className="bg-gray-800 rounded-xl shadow-lg overflow-hidden w-80 cursor-pointer transition-transform transform hover:scale-105">
+                <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                  <img src={video.thumbnail || "/thumbnail.jpg"} alt={video.title} className="absolute top-0 left-0 w-full h-full object-cover rounded-t-xl" />
+                </div>
+                <div className="p-4 text-center">
+                  <h3 className="font-semibold text-lg mb-1 text-blue-400 truncate">{video.title}</h3>
+                  <p className="text-sm text-gray-400">{video.channel}</p>
+                </div>
+              </a>
+            </Link>
           ))}
         </div>
       </main>
@@ -75,15 +86,14 @@ export default function RecommendationPage() {
           <Play className="mr-2 h-8 w-8" /> Generate Video
         </Button>
       </div>
-
     </div>
   )
 }
 
 function generateVideos() {
-  return Array.from({ length: 6 }, (_, i) => ({
+  return Array.from({ length: 12 }, (_, i) => ({
     title: `Video ${i + 1}`,
     channel: `Channel ${i + 1}`,
-    thumbnail: `/thumbnail.jpg`,
+    thumbnail: "/thumbnail.jpg",
   }))
 }
