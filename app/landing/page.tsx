@@ -1,9 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react';
-import '../globals.css';
-import { Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function LandingPage() {
   const textsToDisplay = [
@@ -56,14 +54,7 @@ export default function LandingPage() {
   };
 
   const handleSearch = () => {
-    console.log("Searching for:", inputValue);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault(); // Prevents new lines in textarea
-      handleSearch();
-    }
+    router.push(`/recommendations?query=${encodeURIComponent(inputValue)}`);
   };
 
   return (
@@ -90,20 +81,12 @@ export default function LandingPage() {
             ref={textAreaRef}
             value={inputValue}
             onChange={handleChange}
-            onKeyDown={handleKeyDown} // Detect Enter key
             placeholder={isFocused ? '' : placeholderText}
-            className="bg-gray-800 text-white p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden border-4 border-white focus:border-blue-400"
+            className="bg-gray-800 text-white p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden border-4 border-white focus: border-blue-400"
             onFocus={handleFocus}
             onBlur={handleBlur}
-            style={{ minHeight: '80px', maxHeight: '300px' }} 
+            style={{ minHeight: '80px', maxHeight: '300px' }}
           />
-          {/* Search Button */}
-          <Button 
-            type="submit" 
-            className="bg-blue-500 text-white py-10 px-10 rounded-2xl text-xl"
-            onClick={handleSearch}>
-            <Search className="mr-2 h-8 w-8" /> Search
-          </Button>
         </div>
         <button
           onClick={handleSearch}
