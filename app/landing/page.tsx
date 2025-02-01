@@ -16,25 +16,22 @@ const LandingPage = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    let index = 0; // Initialize index for typing
-    const textToDisplay = textsToDisplay[currentTextIndex]; // Get the current text to display
+    let index = 0;
+    const textToDisplay = textsToDisplay[currentTextIndex];
 
     const typingInterval = setInterval(() => {
       if (index < textToDisplay.length) {
-        // Append character by character
-        setPlaceholderText(textToDisplay.slice(0, index + 1)); 
+        setPlaceholderText(textToDisplay.slice(0, index + 1));
         index += 1;
       } else {
-        // Once typing completes, wait for a delay and clear
         clearInterval(typingInterval);
         setTimeout(() => {
           setPlaceholderText('');
-          setCurrentTextIndex((prevIndex) => (prevIndex + 1) % textsToDisplay.length); // Move to the next text
+          setCurrentTextIndex((prevIndex) => (prevIndex + 1) % textsToDisplay.length);
         }, 3000);
       }
     }, 100);
 
-    // Clean up interval and reset placeholder on unmount
     return () => {
       clearInterval(typingInterval);
       setPlaceholderText('');
@@ -42,24 +39,31 @@ const LandingPage = () => {
   }, [currentTextIndex]);
 
   return (
-    <div className="bg-gray-900 min-h-screen flex flex-col justify-start items-center text-white">
+    <div className="bg-gray-900 min-h-screen flex flex-col justify-start items-center text-white relative overflow-hidden">
+      {/* Floating Symbols Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        {['∫', 'Σ', 'ℏ', '⊗', '∇', 'sin(x)', 'E=mc²', 'π', 'λ', '𝛿', '⊕'].map((symbol, index) => (
+          <span key={index} className="floating-symbol">{symbol}</span>
+        ))}
+      </div>
+
       {/* Header */}
-      <header className="w-full bg-gray-800 py-4 shadow-lg text-center">
+      <header className="w-full bg-gray-800 py-4 shadow-lg text-center z-10">
         <h1 className="text-4xl font-extrabold font-serif text-blue-400 tracking-wide">
           Instructly
         </h1>
       </header>
 
       {/* Centered Content */}
-      <div className="flex-grow flex flex-col justify-center items-center">
+      <div className="flex-grow flex flex-col justify-center items-center z-10">
         {/* Larger Input Box */}
         <div className="relative mb-6">
           <input
             type="text"
-            placeholder={isFocused ? '' : placeholderText} // Show placeholder text unless focused
+            placeholder={isFocused ? '' : placeholderText}
             className="bg-gray-800 text-white p-6 rounded-xl w-[30rem] h-20 text-center text-xl"
-            onFocus={() => setIsFocused(true)} // Clear placeholder on focus
-            onBlur={() => setIsFocused(false)} // Restore placeholder when focus is lost
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           />
         </div>
       </div>
