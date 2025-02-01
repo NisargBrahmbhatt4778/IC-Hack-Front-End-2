@@ -89,7 +89,7 @@ body {
 .floating-symbol {
   position: absolute;
   font-size: 2rem;
-  color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
   animation: float 6s infinite ease-in-out;
   pointer-events: none;
 }
@@ -106,4 +106,5 @@ body {
 .floating-symbol:nth-child(9) { top: 15%; left: 75%; animation-duration: 10s; }
 .floating-symbol:nth-child(10) { top: 85%; left: 60%; animation-duration: 8s; }
 .floating-symbol:nth-child(11) { top: 35%; left: 25%; animation-duration: 7s; }
+.floating-symbol:nth-child(12) { top: 25%; left: 10%; animation-duration: 7s; }
 
