@@ -125,17 +125,17 @@ export default function VideoGallery() {
       console.log(data);
       if ("task_id" in data) {
         const tid = data.task_id;
-        setInterval(async () => {
+        setShowLoading(
+          <>
+            <LoaderCircle className="animate-spin" />
+            <span className="animate-pulse">Generating Video...</span>
+          </>
+        );
+        const intID = setInterval(async () => {
           const res = await fetch(`${API_URL}/video_status?task_id=${tid}`);
           const data = await res.json();
-          if (data.status === "PENDING" && !showLoading) {
-            setShowLoading(
-              <>
-                <LoaderCircle className="animate-spin" />
-                <span className="animate-pulse">Generating Video...</span>
-              </>
-            );
-          } else if (data.status === "SUCCESS") {
+          console.log(data);
+          if (data.status === "SUCCESS") {
             console.log("Video generated");
             setShowLoading(
               <>
@@ -149,6 +149,7 @@ export default function VideoGallery() {
               </>
             );
             setTimeout(() => setShowLoading(undefined), 5000);
+            clearInterval(intID);
           } else if (data.status === "FAILURE") {
             setShowLoading(
               <>
@@ -158,6 +159,7 @@ export default function VideoGallery() {
               </>
             );
             setTimeout(() => setShowLoading(undefined), 5000);
+            clearInterval(intID);
           }
         }, 5000);
       } else {
@@ -169,7 +171,7 @@ export default function VideoGallery() {
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
       {showLoading !== undefined && (
-        <div className="absolute left-10 top-10 shadow-md p-4 bg-white rounded-lg border-[1px] flex flex-row gap-5">
+        <div className="fixed left-10 top-10 shadow-md p-4 bg-white rounded-lg border-[1px] flex flex-row gap-5 z-50">
           {showLoading}
         </div>
       )}
