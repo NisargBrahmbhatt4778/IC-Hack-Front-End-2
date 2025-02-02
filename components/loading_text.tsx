@@ -20,11 +20,11 @@ export const LoadingText = ({ text }: { text: string }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (currentIndex === text.length + 1 || currentIndex === -1) {
+      if (currentIndex === currentText.length + 1 || currentIndex === -1) {
         wait();
       } else {
-        console.log(text.slice(0, currentIndex));
-        setCurrentText(text.slice(0, currentIndex));
+        console.log(currentText.slice(0, currentIndex));
+        setCurrentText(currentText.slice(0, currentIndex));
         setCurrentIndex((prevIndex) => prevIndex + textDir);
       }
     }, 150);

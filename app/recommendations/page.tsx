@@ -9,6 +9,7 @@ import { API_URL } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { LoaderCircle } from "lucide-react";
+import { usePolling } from "../contexts/PollingContext";
 
 const Bubble = ({
   size,
@@ -45,9 +46,7 @@ export default function VideoGallery() {
   const query = searchParams.get("query");
   const [searchQuery, setSearchQuery] = useState(query || "");
   const params = useSearchParams();
-  const [showLoading, setShowLoading] = useState<
-    React.ReactElement | undefined
-  >(undefined);
+  const { startPolling } = usePolling();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -122,46 +121,8 @@ export default function VideoGallery() {
       });
 
       const data = await res.json();
-      console.log(data);
       if ("task_id" in data) {
-        const tid = data.task_id;
-        setShowLoading(
-          <>
-            <LoaderCircle className="animate-spin" />
-            <span className="animate-pulse">Generating Video...</span>
-          </>
-        );
-        const intID = setInterval(async () => {
-          const res = await fetch(`${API_URL}/video_status?task_id=${tid}`);
-          const data = await res.json();
-          console.log(data);
-          if (data.status === "SUCCESS") {
-            console.log("Video generated");
-            setShowLoading(
-              <>
-                <Link
-                  href={data?.result?.video_url ?? ""}
-                  className="no-underline font-bold"
-                >
-                  Click Here
-                </Link>{" "}
-                to go to your video.
-              </>
-            );
-            setTimeout(() => setShowLoading(undefined), 5000);
-            clearInterval(intID);
-          } else if (data.status === "FAILURE") {
-            setShowLoading(
-              <>
-                <span className="text-red-500">
-                  Failed to generate video. Please try again.
-                </span>
-              </>
-            );
-            setTimeout(() => setShowLoading(undefined), 5000);
-            clearInterval(intID);
-          }
-        }, 5000);
+        startPolling(data.task_id);
       } else {
         console.error("Failed to generate video");
       }
@@ -170,11 +131,6 @@ export default function VideoGallery() {
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
-      {showLoading !== undefined && (
-        <div className="fixed left-10 top-10 shadow-md p-4 bg-white rounded-lg border-[1px] flex flex-row gap-5 z-50">
-          {showLoading}
-        </div>
-      )}
       {/* Animated Bubbles */}
       <Bubble size={100} position={{ top: "10%", left: "5%" }} duration={7} />
       <Bubble size={60} position={{ top: "30%", left: "15%" }} duration={5} />
@@ -277,7 +233,6 @@ export default function VideoGallery() {
           <Button
             size="lg"
             onClick={handleVideoGen}
-            disabled={showLoading !== undefined}
             className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8"
           >
             Generate New Video
