@@ -1,100 +1,119 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { motion } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
 
-export default function LandingPage() {
-  const textsToDisplay = [
-    "Formation of a sine wave.",
-    "Fluid flow using Bernoulli's principle.",
-    "Eigenvalues transforming vectors.",
-  ];
-
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [placeholderText, setPlaceholderText] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    let index = 0;
-    const textToDisplay = textsToDisplay[currentTextIndex];
-
-    const typingInterval = setInterval(() => {
-      if (index < textToDisplay.length) {
-        setPlaceholderText(textToDisplay.slice(0, index + 1));
-        index += 1;
-      } else {
-        clearInterval(typingInterval);
-        setTimeout(() => {
-          setPlaceholderText('');
-          setCurrentTextIndex((prevIndex) => (prevIndex + 1) % textsToDisplay.length);
-        }, 3000);
-      }
-    }, 100);
-
-    return () => clearInterval(typingInterval);
-  }, [currentTextIndex]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = '80px'; // Reset to default size when clicked
-    }
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
-  const handleSearch = () => {
-    router.push(`/recommendations?query=${encodeURIComponent(inputValue)}`);
-  };
+function FloatingPaths({ position }: { position: number }) {
+  const paths = Array.from({ length: 36 }, (_, i) => ({
+    id: i,
+    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
+      380 - i * 5 * position
+    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
+      152 - i * 5 * position
+    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
+      684 - i * 5 * position
+    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+    color: `rgba(15,23,42,${0.1 + i * 0.03})`,
+    width: 0.5 + i * 0.03,
+  }))
 
   return (
-    <div className="bg-gray-900 min-h-screen flex flex-col justify-start items-center text-white relative overflow-hidden">
-      {/* Floating Symbols Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {['∫', 'Σ', 'ℏ', '⊗', '∇', 'sin(x)', 'E=mc²', 'π', 'λ', '𝛿', '⊕', 'cos(x)'].map((symbol, index) => (
-          <span key={index} className="floating-symbol">{symbol}</span>
+    <div className="absolute inset-0 pointer-events-none">
+      <svg className="w-full h-full text-slate-950 dark:text-white" viewBox="0 0 696 316" fill="none">
+        <title>Background Paths</title>
+        {paths.map((path) => (
+          <motion.path
+            key={path.id}
+            d={path.d}
+            stroke="currentColor"
+            strokeWidth={path.width}
+            strokeOpacity={0.1 + path.id * 0.03}
+            initial={{ pathLength: 0.3, opacity: 0.6 }}
+            animate={{
+              pathLength: 1,
+              opacity: [0.3, 0.6, 0.3],
+              pathOffset: [0, 1, 0],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+            }}
+          />
         ))}
+      </svg>
+    </div>
+  )
+}
+
+export default function VisuMath() {
+  const [inputValue, setInputValue] = useState("")
+  const [placeholderText, setPlaceholderText] = useState("Enter a mathematical concept...")
+  const router = useRouter()
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
+
+  const examples = [
+    "Formation of a sine wave",
+    "Fluid flow using Bernoulli's principle",
+    "Eigenvalues transforming vectors",
+  ]
+
+  useEffect(() => {
+    let index = 0
+    const interval = setInterval(() => {
+      setPlaceholderText(examples[index])
+      index = (index + 1) % examples.length
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [examples])
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }
+
+  const handleSearch = () => {
+    router.push(`/recommendations?query=${encodeURIComponent(inputValue)}`)
+  }
+
+  return (
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-white dark:bg-neutral-950">
+      <div className="absolute inset-0">
+        <FloatingPaths position={1} />
+        <FloatingPaths position={-1} />
       </div>
 
-      {/* Header */}
-      <header className="w-full bg-gray-800 py-8 shadow-lg text-center z-10">
-        <h1 className="text-4xl font-extrabold font-serif text-blue-400 tracking-wide">
-          Instructly
-        </h1>
-      </header>
-
-      {/* Centered Content */}
-      <div className="flex-grow flex flex-col justify-center items-center z-10">
-        {/* Search Input with Button */}
-        <div className="relative mb-6 flex items-center space-x-4">
-          <textarea
-            ref={textAreaRef}
-            value={inputValue}
-            onChange={handleChange}
-            placeholder={isFocused ? '' : placeholderText}
-            className="bg-gray-800 text-white p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden border-4 border-white focus: border-blue-400"
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            style={{ minHeight: '80px', maxHeight: '300px' }}
-          />
-        </div>
-        <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+      <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2 }}
+          className="max-w-4xl mx-auto"
         >
-          Search
-        </button>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-700 dark:from-orange-400 dark:to-orange-600">
+            VisuMath
+          </h1>
+
+          <div className="relative mb-6 flex items-center space-x-4 justify-center">
+            <textarea
+              ref={textAreaRef}
+              value={inputValue}
+              onChange={handleChange}
+              placeholder={placeholderText}
+              className="bg-gray-100 text-black p-6 rounded-xl text-center text-xl resize-none transition-all duration-200 w-[30rem] overflow-hidden border-4 border-gray-300 focus:border-orange-500"
+              style={{ minHeight: "80px", maxHeight: "300px" }}
+            />
+          </div>
+          <Button
+            onClick={handleSearch}
+            className="bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition duration-200"
+          >
+            Search
+          </Button>
+        </motion.div>
       </div>
     </div>
-  );
+  )
 }
