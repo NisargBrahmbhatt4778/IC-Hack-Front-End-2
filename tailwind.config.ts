@@ -1,13 +1,12 @@
 import type { Config } from "tailwindcss";
-import { violet } from "tailwindcss/colors";
 
 const config: Config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "*.{js,ts,jsx,tsx,mdx}"
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}"
   ],
   theme: {
     container: {
@@ -25,7 +24,7 @@ const config: Config = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         primary: {
-          DEFAULT: violet[600], // Updated to use Tailwind's violet[600]
+          DEFAULT: "#E37C4C", // Updated primary color
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

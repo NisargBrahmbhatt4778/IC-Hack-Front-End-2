@@ -1,90 +1,146 @@
-import React from 'react';
-import Image from "next/image";
-import Link from "next/link";
-import { Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Navbar from "@/components/Navbar"; // Import Navbar
+"use client";
 
-function VideoCard() {
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import { motion } from "framer-motion"
+
+const Bubble = ({
+  size,
+  position,
+  duration,
+}: { size: number; position: { top: string; left: string }; duration: number }) => (
+  <motion.div
+    className="absolute rounded-full bg-[#E37C4C] opacity-10"
+    style={{
+      width: size,
+      height: size,
+      top: position.top,
+      left: position.left,
+    }}
+    animate={{
+      y: [0, -20, 0],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: duration,
+      repeat: Number.POSITIVE_INFINITY,
+      ease: "easeInOut",
+    }}
+  />
+)
+
+export default function VideoGallery() {
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  }
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 },
+  }
+
   return (
-    <div className="relative group overflow-hidden rounded-lg">
-      <Link href="#" className="absolute inset-0 z-10" prefetch={false}>
-        <span className="sr-only">Play</span>
-      </Link>
-      <img
-        src="/placeholder.svg"
-        alt="Video Thumbnail"
-        width={300}
-        height={200}
-        className="object-cover w-full h-48"
-        style={{ aspectRatio: "300/200", objectFit: "cover" }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Button variant="ghost" size="icon" className="text-white">
-          <Play className="w-6 h-6" />
-        </Button>
-      </div>
-      <div className="bg-white p-3 dark:bg-gray-950">
-        <h3 className="font-semibold text-md md:text-lg line-clamp-1">
-          Sample Video Title
-        </h3>
-      </div>
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {/* Animated Bubbles */}
+      <Bubble size={100} position={{ top: "10%", left: "5%" }} duration={7} />
+      <Bubble size={60} position={{ top: "30%", left: "15%" }} duration={5} />
+      <Bubble size={80} position={{ top: "50%", left: "8%" }} duration={6} />
+      <Bubble size={120} position={{ top: "70%", left: "12%" }} duration={8} />
+      <Bubble size={90} position={{ top: "20%", left: "85%" }} duration={7} />
+      <Bubble size={70} position={{ top: "40%", left: "90%" }} duration={6} />
+      <Bubble size={110} position={{ top: "60%", left: "80%" }} duration={8} />
+      <Bubble size={50} position={{ top: "80%", left: "88%" }} duration={5} />
+
+      {/* Header */}
+      <motion.header
+        className="py-6 text-center relative z-10"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#E37C4C] to-[#E37C4C]">
+          VisuMath
+        </h1>
+      </motion.header>
+
+      {/* Search Section */}
+      <motion.div
+        className="max-w-4xl mx-auto px-4 py-8 relative z-10"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <div className="flex gap-3 justify-center">
+          <Input type="search" placeholder="Search videos..." className="max-w-3xl text-lg py-6" />
+          <Button className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8">
+            Search
+          </Button>
+        </div>
+      </motion.div>
+
+      {/* Gallery Section */}
+      <main className="max-w-7xl mx-auto px-4 py-8 relative z-10">
+        <motion.h2
+          className="text-3xl font-bold text-center mb-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          Community Video Gallery
+        </motion.h2>
+
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+              variants={item}
+              whileHover={{ y: -5 }}
+            >
+              <div className="relative aspect-video overflow-hidden">
+                <Image
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-v86uBovDPD3ZPx3jiUefigbiUzMBXh.png"
+                  alt="Video thumbnail"
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-lg">Sample Video Title</h3>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Generate Button */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <Button
+            size="lg"
+            className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8"
+          >
+            Generate New Video
+          </Button>
+        </motion.div>
+      </main>
     </div>
-  );
+  )
 }
 
-export default function Home() {
-  return (
-    <React.Fragment>
-      <Navbar />
-
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-12 md:py-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Learn More About
-              <br />
-              <span className="inline-block bg-orange-600 text-white px-4 py-2 rounded-lg mt-2">@TOPIC HERE</span>
-            </h1>
-
-            <p className="text-lg text-gray-600 max-w-xl">
-              Scroll Down to view community videos or generate your own
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button variant="outline" size="lg" className="flex items-center gap-2 border-orange-600 text-orange-600 hover:bg-orange-600 hover:text-white">
-                Scroll Down
-              </Button>
-                <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white">
-                <Play className="w-5 h-5" />
-                Generate My Own
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-            <Image
-              src="/placeholder.svg"
-              alt="Delicious meals including meat dishes and salads on wooden surface"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Videos Section */}
-      <section className="w-full py-6 md:py-12 lg:py-16 bg-gray-100 dark:bg-gray-800">
-        <div className="container px-4 md:px-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {[...Array(3)].map((_, index) => (
-              <VideoCard key={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-    </React.Fragment>
-  );
-}
