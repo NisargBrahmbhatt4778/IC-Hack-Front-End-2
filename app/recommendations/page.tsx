@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { API_URL } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { LoaderCircle } from "lucide-react";
 
 const Bubble = ({
   size,
@@ -41,6 +44,13 @@ export default function VideoGallery() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [searchQuery, setSearchQuery] = useState(query || "");
+  const params = useSearchParams();
+  const [showLoading, setShowLoading] = useState<
+    React.ReactElement | undefined
+  >(undefined);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const container = {
     hidden: { opacity: 0 },
@@ -56,10 +66,6 @@ export default function VideoGallery() {
     hidden: { y: 20, opacity: 0 },
     show: { y: 0, opacity: 1 },
   };
-
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!query) return;
@@ -102,8 +108,71 @@ export default function VideoGallery() {
     router.push(`/recommendations?query=${encodeURIComponent(searchQuery)}`);
   };
 
+  const handleVideoGen = async () => {
+    const q = params.get("query");
+    if (q) {
+      const res = await fetch(`${API_URL}/gen_video`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: q,
+        }),
+      });
+
+      const data = await res.json();
+      console.log(data);
+      if ("task_id" in data) {
+        const tid = data.task_id;
+        setInterval(async () => {
+          const res = await fetch(`${API_URL}/video_status?task_id=${tid}`);
+          const data = await res.json();
+          if (data.status === "PENDING" && !showLoading) {
+            setShowLoading(
+              <>
+                <LoaderCircle className="animate-spin" />
+                <span className="animate-pulse">Generating Video...</span>
+              </>
+            );
+          } else if (data.status === "SUCCESS") {
+            console.log("Video generated");
+            setShowLoading(
+              <>
+                <Link
+                  href={data?.result?.video_url ?? ""}
+                  className="no-underline font-bold"
+                >
+                  Click Here
+                </Link>{" "}
+                to go to your video.
+              </>
+            );
+            setTimeout(() => setShowLoading(undefined), 5000);
+          } else if (data.status === "FAILURE") {
+            setShowLoading(
+              <>
+                <span className="text-red-500">
+                  Failed to generate video. Please try again.
+                </span>
+              </>
+            );
+            setTimeout(() => setShowLoading(undefined), 5000);
+          }
+        }, 5000);
+      } else {
+        console.error("Failed to generate video");
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {showLoading !== undefined && (
+        <div className="absolute left-10 top-10 shadow-md p-4 bg-white rounded-lg border-[1px] flex flex-row gap-5">
+          {showLoading}
+        </div>
+      )}
       {/* Animated Bubbles */}
       <Bubble size={100} position={{ top: "10%", left: "5%" }} duration={7} />
       <Bubble size={60} position={{ top: "30%", left: "15%" }} duration={5} />
@@ -205,6 +274,8 @@ export default function VideoGallery() {
         >
           <Button
             size="lg"
+            onClick={handleVideoGen}
+            disabled={showLoading !== undefined}
             className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8"
           >
             Generate New Video

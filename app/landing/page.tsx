@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 function FloatingPaths({ position }: { position: number }) {
   const paths = Array.from({ length: 36 }, (_, i) => ({
@@ -17,11 +17,15 @@ function FloatingPaths({ position }: { position: number }) {
     } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
     color: `rgba(15,23,42,${0.1 + i * 0.03})`,
     width: 0.5 + i * 0.03,
-  }))
+  }));
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <svg className="w-full h-full text-slate-950 dark:text-white" viewBox="0 0 696 316" fill="none">
+      <svg
+        className="w-full h-full text-slate-950 dark:text-white"
+        viewBox="0 0 696 316"
+        fill="none"
+      >
         <title>Background Paths</title>
         {paths.map((path) => (
           <motion.path
@@ -45,38 +49,40 @@ function FloatingPaths({ position }: { position: number }) {
         ))}
       </svg>
     </div>
-  )
+  );
 }
 
 export default function VisuMath() {
-  const [inputValue, setInputValue] = useState("")
-  const [placeholderText, setPlaceholderText] = useState("Enter a mathematical concept...")
-  const router = useRouter()
-  const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
+  const [inputValue, setInputValue] = useState("");
+  const [placeholderText, setPlaceholderText] = useState(
+    "Enter a mathematical concept..."
+  );
+  const router = useRouter();
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const examples = [
     "Formation of a sine wave",
     "Fluid flow using Bernoulli's principle",
     "Eigenvalues transforming vectors",
-  ]
+  ];
 
   useEffect(() => {
-    let index = 0
+    let index = 0;
     const interval = setInterval(() => {
-      setPlaceholderText(examples[index])
-      index = (index + 1) % examples.length
-    }, 3000)
+      setPlaceholderText(examples[index]);
+      index = (index + 1) % examples.length;
+    }, 3000);
 
-    return () => clearInterval(interval)
-  }, [examples])
+    return () => clearInterval(interval);
+  }, [examples]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value)
-  }
+    setInputValue(e.target.value);
+  };
 
   const handleSearch = () => {
-    router.push(`/recommendations?query=${encodeURIComponent(inputValue)}`)
-  }
+    router.push(`/recommendations?query=${encodeURIComponent(inputValue)}`);
+  };
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-white dark:bg-neutral-950">
@@ -115,5 +121,5 @@ export default function VisuMath() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

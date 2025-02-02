@@ -5,8 +5,7 @@ import VideoPane from "./components/VideoPane";
 import InteractivePane from "./components/InteractivePane";
 import { useEffect, useState } from "react";
 import { LoadingText } from "@/components/loading_text";
-
-export const API_URL = "http://localhost:8000"; // Use localhost for testing
+import { API_URL } from "@/lib/utils";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean | undefined>(true);
@@ -53,7 +52,7 @@ export default function Home() {
   return (
     <PanelGroup direction="horizontal">
       <Panel defaultSize={50} minSize={30}>
-        <VideoPane videoUrl={videoUrl} />
+        <VideoPane videoUrl={videoUrl ?? ""} />
       </Panel>
       <PanelResizeHandle className="w-2 bg-gray-200 hover:bg-gray-300 transition-colors" />
       <Panel minSize={30}>
