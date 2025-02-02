@@ -5,6 +5,7 @@ import { LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/lib/utils";
+import { X } from "lucide-react";
 
 interface PollingContextType {
   startPolling: (taskId: string) => void;
@@ -35,14 +36,17 @@ export function PollingProvider({ children }: { children: ReactNode }) {
         setShowLoading(
           <>
             <Button
-              onClick={() => router.push(`/video?id=${data?.result?.id}`)}
+              onClick={() => router.push(`/video?id=${data?.result?.data?.id}`)}
               className="bg-[#E37C4C] hover:bg-[#d16b3d]"
             >
               View Your Video
             </Button>
+            <Button onClick={() => setShowLoading(undefined)}>
+              <X></X>
+            </Button>
           </>
         );
-        setTimeout(() => setShowLoading(undefined), 5000);
+        // setTimeout(() => setShowLoading(undefined), 5000);
         clearInterval(intID);
       } else if (data.status === "FAILURE") {
         setShowLoading(
@@ -50,9 +54,12 @@ export function PollingProvider({ children }: { children: ReactNode }) {
             <span className="text-red-500">
               Failed to generate video. Please try again.
             </span>
+            <Button onClick={() => setShowLoading(undefined)}>
+              <X></X>
+            </Button>
           </>
         );
-        setTimeout(() => setShowLoading(undefined), 5000);
+        // setTimeout(() => setShowLoading(undefined), 5000);
         clearInterval(intID);
       }
     }, 5000);

@@ -67,10 +67,10 @@ export default function Home() {
   return (
     <PanelGroup
       direction="horizontal"
-      className="h-screen w-screen overflow-hidden"
+      className="h-screen w-screen overflow-hidden flex-1"
     >
-      <Panel defaultSize={50} minSize={30}>
-        <VideoPane videoUrl={videoUrl} videoDetails={video} />
+      <Panel defaultSize={50} minSize={30} className="bg-orange-100">
+        <VideoPane videoUrl={videoUrl ?? ""} videoDetails={video} />
       </Panel>
       <PanelResizeHandle className="w-2 bg-gray-200 hover:bg-gray-300 transition-colors" />
       <Panel minSize={30}>
