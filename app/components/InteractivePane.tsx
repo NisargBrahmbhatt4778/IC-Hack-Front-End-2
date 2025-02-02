@@ -268,7 +268,7 @@ export default function InteractivePane() {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white flex flex-col items-center justify-center">
+    <div className="bg-orange-100 text-white flex flex-col items-center justify-center">
       <div className="w-full h-full max-w-3xl mt-8 bg-white rounded-lg overflow-hidden">
         {code && (
           <Sandpack
