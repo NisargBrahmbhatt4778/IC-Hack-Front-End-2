@@ -1,15 +1,21 @@
 "use client";
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { motion } from "framer-motion"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const Bubble = ({
   size,
   position,
   duration,
-}: { size: number; position: { top: string; left: string }; duration: number }) => (
+}: {
+  size: number;
+  position: { top: string; left: string };
+  duration: number;
+}) => (
   <motion.div
     className="absolute rounded-full bg-[#E37C4C] opacity-10"
     style={{
@@ -28,9 +34,14 @@ const Bubble = ({
       ease: "easeInOut",
     }}
   />
-)
+);
 
 export default function VideoGallery() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+  const [searchQuery, setSearchQuery] = useState(query || "");
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -39,12 +50,57 @@ export default function VideoGallery() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const item = {
     hidden: { y: 20, opacity: 0 },
     show: { y: 0, opacity: 1 },
-  }
+  };
+
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!query) return;
+
+    const fetchVideos = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch(
+          `http://localhost:8000/vector/search?query=${encodeURIComponent(
+            query
+          )}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setVideos(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, [query]);
+
+  const handleSearch = () => {
+    if (!searchQuery) return;
+    router.push(`/recommendations?query=${encodeURIComponent(searchQuery)}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
@@ -78,8 +134,20 @@ export default function VideoGallery() {
         transition={{ delay: 0.2 }}
       >
         <div className="flex gap-3 justify-center">
-          <Input type="search" placeholder="Search videos..." className="max-w-3xl text-lg py-6" />
-          <Button className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8">
+          <Input
+            type="search"
+            placeholder="Search videos..."
+            className="max-w-3xl text-lg py-6"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+          />
+          <Button
+            className="bg-[#E37C4C] hover:bg-[#d16b3d] transition-all duration-300 hover:scale-105 text-lg py-6 px-8"
+            onClick={handleSearch}
+          >
             Search
           </Button>
         </div>
@@ -102,24 +170,27 @@ export default function VideoGallery() {
           initial="hidden"
           animate="show"
         >
-          {[...Array(6)].map((_, i) => (
+          {videos.map((video, i) => (
             <motion.div
               key={i}
-              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
               variants={item}
               whileHover={{ y: -5 }}
+              onClick={() => {
+                router.push(`/video?id=${video.id}`);
+              }}
             >
               <div className="relative aspect-video overflow-hidden">
                 <Image
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-v86uBovDPD3ZPx3jiUefigbiUzMBXh.png"
-                  alt="Video thumbnail"
+                  src={video.image_url}
+                  alt={video.video_title}
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-lg">Sample Video Title</h3>
+                <h3 className="font-semibold text-lg">{video.video_title}</h3>
               </div>
             </motion.div>
           ))}
@@ -141,6 +212,5 @@ export default function VideoGallery() {
         </motion.div>
       </main>
     </div>
-  )
+  );
 }
-
