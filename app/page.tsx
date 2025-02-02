@@ -46,9 +46,9 @@ export default function Home() {
     }
   }, [taskId])
 
-  if (isLoading) {
-    return <LoadingText />
-  }
+  // if (isLoading) {
+  //   return <LoadingText />
+  // }
 
   return (
     <PanelGroup direction="horizontal">

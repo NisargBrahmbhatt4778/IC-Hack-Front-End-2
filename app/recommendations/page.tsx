@@ -39,7 +39,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-12 md:py-24">
+      <section className="container mx-auto px-4 py-12 md:py-8">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
