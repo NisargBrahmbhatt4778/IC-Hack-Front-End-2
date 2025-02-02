@@ -65,7 +65,9 @@ export default function VideoGallery() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-[#E37C4C] text-5xl font-bold">VisuMath</h1>
+        <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-[#E37C4C] to-[#E37C4C]">
+          VisuMath
+        </h1>
       </motion.header>
 
       {/* Search Section */}
